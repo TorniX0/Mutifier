@@ -1,4 +1,6 @@
-<h1 align="center">TROUBLESHOOTING</h1>
+<p align="center">
+<img src="https://github.com/TorniX0/Mutifier/raw/main/troubleshooting.png" width="480" height="163.84">
+</p>
 </br>
 
 ## Common (known) issues and fixes
