@@ -20,7 +20,7 @@ Mutifier is a lightweight open-source application designed to mute your micropho
 
 # Troubleshooting
 Is the program not working? Is it not doing what it's supposed to do? </br>
-Then please check out the [troubleshooting](troubleshoot.md) document.
+Then please check out the [troubleshooting](TROUBLESHOOTING.md) document.
 
 # License
 ...
