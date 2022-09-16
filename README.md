@@ -23,6 +23,6 @@ Is the program not working? Is it not doing what it's supposed to do? </br>
 Then please check out the [troubleshooting](TROUBLESHOOTING.md) document.
 
 # License
-This project is licensed under the GNU General Public License version 3 ("GPLv3") and therefore can be used in commercial projects. However, any commit or change to the main code must be public and there should be a copyright notice in the source code clarifying the license and its terms as part of your project as well as a hyperlink to this repository. This program is distributed in the hope that it will be useful. [Read more about the license here](LICENSE.md).
+This project is licensed under the GNU General Public License version 3 ("GPLv3") license and therefore can be used in commercial projects. However, any commit or change to the main code must be public and there should be a copyright notice in the source code clarifying the license and its terms as part of your project as well as a hyperlink to this repository. This program is distributed in the hope that it will be useful. [Read more about the license here](LICENSE.md).
 
 **THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.**
