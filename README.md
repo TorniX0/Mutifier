@@ -7,7 +7,7 @@
 </a>
 </p>
 
-<h3 align="center">Ever needed a stress-free way to mute your microphone globally?</h3>
+<h3 align="center">Ever needed a stress-free way to mute your microphone globally with just one program?</h3>
 <h3 align="center">Then Mutifier is for you.</h3>
 
 # What is it?
