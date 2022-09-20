@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+	<AssemblyVersion>1.0.0.0</AssemblyVersion>
+	<FileVersion>1.0.0.0</FileVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <ProjectReference Include="..\Mutifier.Backend\Mutifier.Backend.vcxproj">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
+		  <OutputItemType>Content</OutputItemType>
+		  <Name>Mutifier.Backend</Name>
+	  	  <Project>{8fbd0d29-8ce7-4ac7-a1af-11cefaa356ac}</Project>
+	  </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="sounds\beep.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="sounds\muted.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="sounds\unmuted.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
