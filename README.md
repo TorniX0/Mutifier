@@ -22,6 +22,13 @@ Mutifier is a lightweight open-source application designed to mute your micropho
 Is the program not working? Is it not doing what it's supposed to do? </br>
 Then please check out the [troubleshooting](TROUBLESHOOTING.md) document.
 
+</br>
+</br>
+</br>
+</br>
+
+.NET 6.0 SDK is required to build the project: https://dotnet.microsoft.com/download/dotnet/6.0
+
 # License
 This project is licensed under the GNU General Public License version 3 (GPL-3.0) license and therefore can be used in commercial projects. However, any commit or change to the main code must be public and there should be a copyright notice in the source code clarifying the license and its terms as part of your project as well as a hyperlink to this repository. This program is distributed in the hope that it will be useful. [Read more about the license here](LICENSE.md).
 
