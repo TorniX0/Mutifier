@@ -11,8 +11,6 @@ namespace Mutifier.Frontend
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
 
             if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length > 1)
@@ -25,7 +23,7 @@ namespace Mutifier.Frontend
             Utilities.ValidateFiles();
 
 #if !DEBUG
-            Update.CheckForUpdates();
+             Update.CheckForUpdates();
 #endif
 
             Application.Run(new MainWindow());

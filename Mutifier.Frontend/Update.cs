@@ -12,7 +12,7 @@ namespace Mutifier.Frontend
 {
     internal static class Update
     {
-        internal static readonly string? programVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
+        internal static readonly string? programVersion = FileVersionInfo.GetVersionInfo(Environment.ProcessPath).FileVersion;
 
         private class GitHubResponse
         {
