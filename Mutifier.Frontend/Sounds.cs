@@ -47,11 +47,12 @@ namespace Mutifier.Frontend
             }
         }
 
-        private static string GetSound(SoundType type) => type switch
+        private static string GetSound(SoundType type) => Utilities.GetCurrentPath() + 
+        type switch
         {
-            SoundType.MicMuted => Utilities.GetCurrentPath() + @"sounds\muted.wav",
-            SoundType.MicUnmuted => Utilities.GetCurrentPath() + @"sounds\unmuted.wav",
-            SoundType.MicBeeps => Utilities.GetCurrentPath() + @"sounds\beep.wav",
+            SoundType.MicMuted => @"sounds\muted.wav",
+            SoundType.MicUnmuted => @"sounds\unmuted.wav",
+            SoundType.MicBeeps => @"sounds\beep.wav",
             _ => string.Empty
         };
 
@@ -61,7 +62,7 @@ namespace Mutifier.Frontend
 
             if (File.Exists(path))
             {
-                using var soundPlayer = new SoundPlayer(path);
+                using SoundPlayer soundPlayer = new(path);
                 soundPlayer.Play();
             }
         }

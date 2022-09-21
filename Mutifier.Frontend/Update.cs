@@ -12,33 +12,36 @@ namespace Mutifier.Frontend
 {
     internal static class Update
     {
-        private readonly static Version assemblyVersion = Assembly.GetEntryAssembly().GetName().Version;
-        internal static readonly string programVersion = string.Join('.', assemblyVersion.Major, assemblyVersion.Minor, assemblyVersion.Build, assemblyVersion.Revision);
+        internal static readonly string? programVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
 
         private class GitHubResponse
         {
-            public int id { get; set; }
-            public string tag_name { get; set; }
-            public string update_url { get; set; }
-            public string update_authenticity_token { get; set; }
-            public string delete_url { get; set; }
-            public string delete_authenticity_token { get; set; }
-            public string edit_url { get; set; }
+            public int id { get; set; } = 0;
+            public string tag_name { get; set; } = string.Empty;
+            public string update_url { get; set; } = string.Empty;
+            public string update_authenticity_token { get; set; } = string.Empty;
+            public string delete_url { get; set; } = string.Empty;
+            public string delete_authenticity_token { get; set; } = string.Empty;
+            public string edit_url { get; set; } = string.Empty;
         }
 
 
         public static void CheckForUpdates()
         {
-            HttpClient client = new();
-            client.Timeout = TimeSpan.FromSeconds(1);
+            HttpClient client = new()
+            {
+                Timeout = TimeSpan.FromSeconds(1)
+            };
+
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             Uri link = new("https://github.com/TorniX0/Mutifier/releases/latest");
-            string result = string.Empty;
+            GitHubResponse response = new();
 
             try
             {
-                result = client.GetStringAsync(link).Result;
+                string result = client.GetStringAsync(link).Result;
+                response = JsonSerializer.Deserialize<GitHubResponse>(result)!;
             }
             catch
             {
@@ -50,12 +53,10 @@ namespace Mutifier.Frontend
                 client.Dispose();
             }
 
-            GitHubResponse response = JsonSerializer.Deserialize<GitHubResponse>(result)!;
-
             int verIndex = response.tag_name.IndexOfAny("0123456789".ToCharArray());
             string version = response.tag_name[verIndex..];
 
-            if (version != programVersion)
+            if (programVersion != null && version != programVersion)
             {
                 DialogResult res = MessageBox.Show("Found a new version! Would you like to be redirected to the GitHub page?", "Mutifier", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 

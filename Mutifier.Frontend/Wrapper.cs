@@ -27,56 +27,6 @@ namespace Mutifier.Frontend
         [DllImport(backendName, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void SetMicMuted(bool muted);
 
-
-        /*
-        [DllImport(backendName, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void ChangeMicVolumeA(float volume);
-
-        [DllImport(backendName, CallingConvention = CallingConvention.Cdecl)]
-        private static extern float GetMicVolumeA();
-
-        [DllImport(backendName, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void SetMicMutedA(bool muted);
-
-        
-        public static void ChangeMicVolume(float volume)
-        {
-            try
-            {
-                ChangeMicVolumeA(volume);
-            }
-            catch
-            {
-                MessageBox.Show("An error occured with the backend!", "Mutifier", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        public static float GetMicVolume()
-        {
-            try
-            {
-                return GetMicVolumeA();
-            }
-            catch
-            {
-                MessageBox.Show("An error occured with the backend!", "Mutifier", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return 0;
-            }
-        }
-
-        public static void SetMicMuted(bool muted)
-        {
-            try
-            {
-                SetMicMutedA(muted);
-            }
-            catch
-            {
-                MessageBox.Show("An error occured with the backend!", "Mutifier", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-        */
-
         public static void CheckBackend()
         {
             if (!File.Exists(backendName))

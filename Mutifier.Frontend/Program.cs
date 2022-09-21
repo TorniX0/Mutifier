@@ -24,9 +24,9 @@ namespace Mutifier.Frontend
 
             Utilities.ValidateFiles();
 
-//#if !DEBUG
+#if !DEBUG
             Update.CheckForUpdates();
-//#endif
+#endif
 
             Application.Run(new MainWindow());
         }

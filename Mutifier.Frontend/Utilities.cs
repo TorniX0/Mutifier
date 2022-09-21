@@ -14,15 +14,10 @@ namespace Mutifier.Frontend
 {
     internal static class Utilities
     {
-        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-        private static extern short GetKeyState(int keyCode);
-
         public static void ValidateFiles()
         {
             Wrapper.CheckBackend();
             Sounds.ValidateSounds();
-            //if ()
-            //if ()
         }
 
         public static string GetCurrentPath() => AppDomain.CurrentDomain.BaseDirectory;
