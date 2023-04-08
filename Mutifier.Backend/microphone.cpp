@@ -77,7 +77,7 @@ extern "C"
         CoUninitialize();
     }
 
-    Microphone bool GetMicMuted()
+    Microphone bool IsMicMuted()
     {
         HRESULT hr;
         CoInitialize(NULL);

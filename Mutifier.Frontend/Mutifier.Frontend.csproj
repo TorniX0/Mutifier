@@ -1,40 +1,61 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net7.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<!--Avalonia doesen't support TrimMode=link currently,but we are working on that https://github.com/AvaloniaUI/Avalonia/issues/6892 -->
+		<TrimMode>copyused</TrimMode>
+		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<StartupObject>Mutifier.Frontend.Program</StartupObject>
+		<ApplicationIcon>assets\icon.ico</ApplicationIcon>
+		<Version>1.0.1.0</Version>
+		<UseWindowsForms>True</UseWindowsForms>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Remove=".gitignore" />
+	</ItemGroup>
+	<ItemGroup>
+		<AvaloniaResource Include="assets\icon.ico" />
+	</ItemGroup>
+	<ItemGroup>
+		<!--This helps with theme dll-s trimming.
+	If you will publish your application in self-contained mode with p:PublishTrimmed=true and it will use Fluent theme Default theme will be trimmed from the output and vice versa.
+	https://github.com/AvaloniaUI/Avalonia/issues/5593 -->
+		<TrimmableAssembly Include="Avalonia.Themes.Fluent" />
+		<TrimmableAssembly Include="Avalonia.Themes.Default" />
+	</ItemGroup>
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
-	<AssemblyVersion>1.0.0.0</AssemblyVersion>
-	<FileVersion>1.0.0.0</FileVersion>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <ApplicationIcon>icon.ico</ApplicationIcon>
-  </PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Mutifier.Backend\Mutifier.Backend.vcxproj">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<ReferenceOutputAssembly>False</ReferenceOutputAssembly>
+			<OutputItemType>Content</OutputItemType>
+			<Name>Mutifier.Backend</Name>
+			<Project>{8fbd0d29-8ce7-4ac7-a1af-11cefaa356ac}</Project>
+		</ProjectReference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <Content Include="icon.ico" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="assets\sounds\beep.wav">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\sounds\muted.wav">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\sounds\unmuted.wav">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
-  <ItemGroup>
-	  <ProjectReference Include="..\Mutifier.Backend\Mutifier.Backend.vcxproj">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		  <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
-		  <OutputItemType>Content</OutputItemType>
-		  <Name>Mutifier.Backend</Name>
-	  	  <Project>{8fbd0d29-8ce7-4ac7-a1af-11cefaa356ac}</Project>
-	  </ProjectReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="sounds\beep.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="sounds\muted.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="sounds\unmuted.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
+	<ItemGroup>
+		<PackageReference Include="Avalonia" Version="0.10.19" />
+		<PackageReference Include="Avalonia.Desktop" Version="0.10.19" />
+		<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+		<PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="0.10.19" />
+		<PackageReference Include="NAudio" Version="2.1.0" />
+		<PackageReference Include="NAudio.Core" Version="2.1.0" />
+		<PackageReference Include="XamlNameReferenceGenerator" Version="1.6.1" />
+	</ItemGroup>
 </Project>

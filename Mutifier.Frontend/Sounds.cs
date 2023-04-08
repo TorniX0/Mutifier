@@ -1,24 +1,26 @@
-﻿using System;
+﻿using NAudio.Wave;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Media;
+using System.IO;
 using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Mutifier.Frontend
 {
     public enum SoundType : int
     {
-        MicMuted,
-        MicUnmuted,
-        MicBeeps
+        Muted,
+        Unmuted,
+        Beeps
     }
 
     internal static class Sounds
     {
+        private static WaveOutEvent? soundPlayer;
+        private static AudioFileReader audio = null!;
         public static void ValidateSounds()
         {
-            List<string> missingSounds = new();
+            HashSet<string> missingSounds = new();
 
             foreach (SoundType type in (SoundType[])Enum.GetValues(typeof(SoundType)))
             {
@@ -34,7 +36,7 @@ namespace Mutifier.Frontend
             {
                 StringBuilder sb = new();
                 sb.AppendLine("The following sounds are missing:");
-                
+
                 foreach (string sound in missingSounds)
                 {
                     sb.AppendLine(Path.GetFileName(sound));
@@ -43,16 +45,16 @@ namespace Mutifier.Frontend
                 sb.AppendLine();
                 sb.AppendLine("These sounds will work if they are back in place.");
 
-                MessageBox.Show(sb.ToString(), "Mutifier", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                DialogBox.Show(sb.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private static string GetSound(SoundType type) => Utilities.GetCurrentPath() + 
+        private static string GetSound(SoundType type) => Utilities.GetCurrentPath() + @"assets\sounds\" + 
         type switch
         {
-            SoundType.MicMuted => @"sounds\muted.wav",
-            SoundType.MicUnmuted => @"sounds\unmuted.wav",
-            SoundType.MicBeeps => @"sounds\beep.wav",
+            SoundType.Muted => "muted.wav",
+            SoundType.Unmuted => "unmuted.wav",
+            SoundType.Beeps => "beep.wav",
             _ => string.Empty
         };
 
@@ -62,7 +64,20 @@ namespace Mutifier.Frontend
 
             if (File.Exists(path))
             {
-                using SoundPlayer soundPlayer = new(path);
+                soundPlayer?.Stop();
+
+                try
+                {
+                    audio = new(path);
+                }
+                catch (FormatException e)
+                {
+                    DialogBox.Show(e.Message.Replace(Environment.NewLine, " "), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                soundPlayer = new();
+                soundPlayer.Init(audio);
                 soundPlayer.Play();
             }
         }

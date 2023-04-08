@@ -1,37 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Runtime.CompilerServices;
+﻿//using MessageBox.Avalonia.Enums;
+using System;
+using System.Windows;
+using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Mutifier.Frontend
 {
-    internal static class Wrapper
+    internal static partial class Wrapper
     {
+        /* Backend dll name */
         const string backendName = "Mutifier.Backend.dll";
 
-        [DllImport(backendName, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void ChangeMicVolume(float volume);
+        [LibraryImport(backendName)]
+        [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
+        internal static partial void ChangeMicVolume(float volume);
 
-        [DllImport(backendName, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern float GetMicVolume();
+        [LibraryImport(backendName)]
+        [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
+        internal static partial float GetMicVolume();
 
-        [DllImport(backendName, CallingConvention = CallingConvention.Cdecl)]
+        [LibraryImport(backendName)]
+        [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool GetMicMuted();
+        internal static partial bool IsMicMuted();
 
-        [DllImport(backendName, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void SetMicMuted(bool muted);
+        [LibraryImport(backendName)]
+        [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
+        internal static partial void SetMicMuted([MarshalAs(UnmanagedType.Bool)] bool muted);
 
+        /// <summary>
+        /// Self-explanatory; checks if the backend dll is present and if it's corrupted/invalid
+        /// </summary>
         public static void CheckBackend()
         {
             if (!File.Exists(backendName))
             {
-                MessageBox.Show("The backend dll was not found!", "Mutifier", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                DialogBox.Show("The backend dll was not found!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Environment.Exit(-1);
             }
 
@@ -41,7 +46,7 @@ namespace Mutifier.Frontend
             }
             catch (Exception ex) when (ex is BadImageFormatException || ex is EntryPointNotFoundException || ex is DllNotFoundException)
             {
-                MessageBox.Show("Something is wrong with the backend file!", "Mutifier", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                DialogBox.Show("Something is wrong with the backend file!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Environment.Exit(-1);
             }
         }

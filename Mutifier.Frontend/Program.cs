@@ -1,32 +1,22 @@
-using System.Diagnostics;
-using System.Reflection;
+using Avalonia;
+using System;
 
 namespace Mutifier.Frontend
 {
-    internal static class Program
+    internal class Program
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
+        // Initialization code. Don't use any Avalonia, third-party APIs or any
+        // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
+        // yet and stuff might break.
         [STAThread]
-        static void Main()
-        {
-            ApplicationConfiguration.Initialize();
+        public static void Main(string[] args) 
+            => BuildAvaloniaApp()
+                .StartWithClassicDesktopLifetime(args);
 
-            if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length > 1)
-            {
-                MessageBox.Show("Mutifier is already running. Only one instance of this application is allowed.", "Mutifier", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                Environment.Exit(-1);
-                return;
-            }
-
-            Utilities.ValidateFiles();
-
-#if !DEBUG
-             Update.CheckForUpdates();
-#endif
-
-            Application.Run(new MainWindow());
-        }
+        // Avalonia configuration, don't remove; also used by visual designer.
+        public static AppBuilder BuildAvaloniaApp()
+            => AppBuilder.Configure<App>()
+                .UsePlatformDetect()
+                .LogToTrace();
     }
 }

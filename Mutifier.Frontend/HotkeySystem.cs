@@ -1,66 +1,74 @@
-﻿using Microsoft.VisualBasic.Devices;
+﻿using System.Collections.Generic;
+using System;
 using System.Runtime.InteropServices;
+using System.Linq;
 
 namespace Mutifier.Frontend
 {
-    internal enum MessageType : int
+    /// <summary>
+    /// Windows message type
+    /// </summary>
+    /// <remarks>
+    /// <a href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-msg" />.
+    /// </remarks>
+    public enum MessageType : int
     {
         HOTKEY_TRIGGER = 0x0312,
         KEY_PRESS = 0x0100
     }
 
     /// <summary>
-    /// Hotkey class to handle all of our inputs in the app.
+    /// Hotkey class to handle all of our global inputs in the app.
     /// TODO: Extend the hotkeys to mouse buttons as well.
     /// </summary>
 
-    internal class HotkeySystem
+    public partial class HotkeySystem : IDisposable
     {
-        private HashSet<KeyValuePair<Keys, Action>> hotkeys;
-        private IntPtr handle = IntPtr.Zero;
+        private HashSet<KeyValuePair<VirtualKeys, Action>> hotkeys;
+        private readonly IntPtr handle = IntPtr.Zero;
+        public event EventHandler<VirtualKeys>? RawKeyInput;
 
-        internal HotkeySystem(IntPtr handle)
+        private SUBCLASSPROC? callback;
+        private readonly object _lockObject = new();
+
+        public HotkeySystem(IntPtr handle)
         {
-            this.hotkeys = new HashSet<KeyValuePair<Keys, Action>>();
+            this.hotkeys = new HashSet<KeyValuePair<VirtualKeys, Action>>();
             this.handle = handle;
+            Subscribe();
         }
 
-        ~HotkeySystem()
+        /// <returns>A read only set containing all the hotkeys</returns>
+        public IReadOnlySet<KeyValuePair<VirtualKeys, Action>> HotkeySet()
+            => hotkeys;
+
+        protected virtual void HandleHotkeys(uint msg, nuint wParam)
         {
-            for (int i = 0; i < hotkeys.Count; i++)
+            if (msg == (uint)MessageType.KEY_PRESS)
             {
-                RemoveHotkey(i);
+                RawKeyInput?.Invoke(null, (VirtualKeys)wParam);
             }
-        }
-
-        internal void HandleHotkeys(ref Message message)
-        {
-            if (message.Msg == (int)MessageType.HOTKEY_TRIGGER)
+            else if (msg == (uint)MessageType.HOTKEY_TRIGGER)
             {
-                int id = message.WParam.ToInt32();
-                KeyValuePair<Keys, Action> element = hotkeys.ElementAtOrDefault(id);
-                if (!element.Equals(default(KeyValuePair<Keys, Action>)))
+                int id = (int)wParam;
+                KeyValuePair<VirtualKeys, Action> element = hotkeys.ElementAtOrDefault(id);
+                if (!element.Equals(default(KeyValuePair<VirtualKeys, Action>)))
                 {
                     element.Value?.Invoke();
                 }
             }
         }
 
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vlc);
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
-
-        internal int RegisterHotkey(Keys key, Action hotkeyFunction)
+        /// <param name="key">Key to register the hotkey for</param>
+        /// <param name="hotkeyFunction">Action to execute on hotkey press</param>
+        /// <returns>The id of the registered key, -1 if the key already exists or if the key registration failed</returns>
+        public int RegisterHotkey(VirtualKeys key, Action hotkeyFunction)
         {
-            if (hotkeys.Add(new KeyValuePair<Keys, Action>(key, hotkeyFunction)))
+            if (hotkeys.Add(new KeyValuePair<VirtualKeys, Action>(key, hotkeyFunction)))
             {
                 int id = hotkeys.ToList().FindIndex(x => x.Key == key);
-                RegisterHotKey(handle, id, 0, key.GetHashCode());
-                return id;
+                bool result = RegisterHotKey(handle, id, 0, key.GetHashCode());
+                return result ? id : -1;
             }
             else
             {
@@ -68,9 +76,11 @@ namespace Mutifier.Frontend
             }
         }
 
-        internal bool RemoveHotkey(int id)
+        /// <param name="id">Id of the registered hotkey you want to remove</param>
+        /// <returns>If the hotkey removal succeeded, this will return true, otherwise, if the id introduced doesn't exist or the hotkey removal fails, this will return false</returns>
+        public bool RemoveHotkey(int id)
         {
-            if (hotkeys.Count > 0 && hotkeys.Remove(hotkeys.ElementAt(id)))
+            if (hotkeys.Remove(hotkeys.ElementAtOrDefault(id)))
             {
                 return UnregisterHotKey(handle, id);
             }
@@ -78,6 +88,74 @@ namespace Mutifier.Frontend
             {
                 return false;
             }
+        }
+
+        public void RemoveAllHotkeys()
+        {
+            for (int i = 0; i < hotkeys.Count; i++)
+            {
+                RemoveHotkey(i);
+            }
+        }
+
+        [LibraryImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vlc);
+
+        [LibraryImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool UnregisterHotKey(IntPtr hWnd, int id);
+
+
+        protected virtual nint WndProc(IntPtr hWnd, uint uMsg, nuint wParam, nint lParam, nuint uIdSubclass, nuint dwRefData)
+        {
+            HandleHotkeys(uMsg, wParam);
+
+            return DefSubclassProc(hWnd, uMsg, wParam, lParam);
+        }
+
+        protected void Subscribe()
+        {
+            lock (_lockObject)
+            {
+                if (callback == null)
+                {
+                    callback = new SUBCLASSPROC(WndProc);
+                    SetWindowSubclass(handle, callback, 101, 0);
+                }
+            }
+        }
+
+        protected void Unsubscribe()
+        {
+            lock (_lockObject)
+            {
+                if (callback != null)
+                {
+                    RemoveWindowSubclass(handle, callback, 101);
+                    callback = null;
+                }
+            }
+        }
+
+        [LibraryImport("comctl32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool SetWindowSubclass(IntPtr hWnd, SUBCLASSPROC pfnSubclass, nuint uIdSubclass, nuint dwRefData);
+
+        [LibraryImport("comctl32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool RemoveWindowSubclass(IntPtr hWnd, SUBCLASSPROC pfnSubclass, nuint uIdSubclass);
+
+        [LibraryImport("comctl32.dll")]
+        private static partial nint DefSubclassProc(IntPtr hWnd, uint uMsg, nuint wParam, nint lParam);
+
+        [UnmanagedFunctionPointer(CallingConvention.Winapi)]
+        private delegate nint SUBCLASSPROC(IntPtr hWnd, uint uMsg, nuint wParam, nint lParam, nuint uIdSubclass, nuint dwRefData);
+
+        public void Dispose()
+        {
+            RemoveAllHotkeys();
+            Unsubscribe();
         }
     }
 }

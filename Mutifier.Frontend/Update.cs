@@ -1,19 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Mutifier.Frontend
 {
     internal static class Update
     {
-        internal static readonly string? programVersion = FileVersionInfo.GetVersionInfo(Environment.ProcessPath).FileVersion;
+        internal static readonly string? programVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
 
+        /// <summary>
+        /// GitHub JSON Response class
+        /// </summary>
         private class GitHubResponse
         {
             public int id { get; set; } = 0;
@@ -26,11 +27,12 @@ namespace Mutifier.Frontend
         }
 
 
+        [Conditional("RELEASE")]
         public static void CheckForUpdates()
         {
             HttpClient client = new()
             {
-                Timeout = TimeSpan.FromSeconds(1)
+                Timeout = TimeSpan.FromSeconds(2)
             };
 
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -45,7 +47,8 @@ namespace Mutifier.Frontend
             }
             catch
             {
-                MessageBox.Show("Something went wrong with the update checking!", "Mutifier", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // TODO: maybe provide proper traceback to the error
+                DialogBox.Show("Something went wrong with the update check! No internet?", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             finally
@@ -58,7 +61,7 @@ namespace Mutifier.Frontend
 
             if (programVersion != null && version != programVersion)
             {
-                DialogResult res = MessageBox.Show("Found a new version! Would you like to be redirected to the GitHub page?", "Mutifier", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                DialogResult res = DialogBox.Show("Found a new version! Would you like to be redirected to the GitHub page?", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
                 if (res == DialogResult.Yes)
                 {
@@ -72,3 +75,4 @@ namespace Mutifier.Frontend
         }
     }
 }
+

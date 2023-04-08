@@ -1,0 +1,29 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+		Width="409" Height="178"
+        x:Class="Mutifier.Frontend.MainWindow"
+        Title="Mutifier"
+		Background="#0f0f0f"
+		CanResize="False"
+		Closing="MainWindow_Closing"
+		Icon="/assets/icon.ico">
+	<Border Padding="10">
+		<Panel>
+			<Button x:Name="muteMic" Click="MuteButton" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0,0,75,0" Width="70">Mute</Button>
+			<Button x:Name="enableMic" Click="MuteButton" HorizontalAlignment="Center" Margin="0,0,-75,0" Width="70">Unmute</Button>
+			<Button x:Name="changeKeybind" Click="changeKeybind_Click" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="25">Change</Button>
+			<TextBlock x:Name="keybindLabel" HorizontalAlignment="Center" VerticalAlignment="Top">Keybind: HOME</TextBlock>
+			<CheckBox x:Name="beepCheckBox" IsChecked="True" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="30">Toggle beeping indicator</CheckBox>
+			<!--
+			<TextBlock HorizontalAlignment="Center" VerticalAlignment="Bottom">github.com/TorniX0</TextBlock>
+			-->
+			<StackPanel Orientation="Horizontal" Spacing="5" Margin="0,5" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+				<TextBlock VerticalAlignment="Center">Made with &#x2764; by</TextBlock>
+				<Button x:Name="repoLink" Click="OpenRepoLink" VerticalAlignment="Center">TorniX</Button> 
+			</StackPanel>
+		</Panel>
+	</Border>
+</Window>
