@@ -30,6 +30,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Mutifier.Backend\Mutifier.Backend.vcxproj">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 			<ReferenceOutputAssembly>False</ReferenceOutputAssembly>
 			<OutputItemType>Content</OutputItemType>
 			<Name>Mutifier.Backend</Name>

@@ -10,8 +10,6 @@ namespace Mutifier.Frontend
 {
     internal static class Update
     {
-        internal static readonly string? programVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
-
         /// <summary>
         /// GitHub JSON Response class
         /// </summary>
@@ -59,7 +57,7 @@ namespace Mutifier.Frontend
             int verIndex = response.tag_name.IndexOfAny("0123456789".ToCharArray());
             string version = response.tag_name[verIndex..];
 
-            if (programVersion != null && version != programVersion)
+            if (version != Application.ProductVersion)
             {
                 DialogResult res = DialogBox.Show("Found a new version! Would you like to be redirected to the GitHub page?", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
