@@ -24,7 +24,7 @@ Then please check out the [troubleshooting](TROUBLESHOOTING.md) document.
 
 .NET 6.0 SDK is required to build the project: https://dotnet.microsoft.com/download/dotnet/6.0
 
-## 💴 Donate
+## Donate
 Donate with crypto below or through [LiberaPay](https://liberapay.com/tornix/)
 
 XMR: `8BVXKKALydz1564FY4UK41DjuvGRRhN7rcfpChPqjz1dXghNLMc3tQFfsdNuLihZFBJLeLNZCoAuh2HvcnDbJvVQQiY8hQz`
